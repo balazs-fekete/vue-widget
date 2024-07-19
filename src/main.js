@@ -1,7 +1,10 @@
-import { createApp } from "vue";
-import "./style.css";
-import App from "./App.vue";
-import vueCustomElement from "vue-custom-element";
+import { createApp, defineCustomElement } from 'vue'
+import './style.css'
+import App from './App.vue'
 
-Vue.use(vueCustomElement);
-Vue.customElement("vue-widget", App);
+const VueWidget = defineCustomElement(App)
+
+customElements.define('vue-widget', VueWidget)
+
+const app = createApp(App)
+app.mount('#app')
