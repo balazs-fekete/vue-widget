@@ -1,8 +1,8 @@
 <template>
   <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-  <BasicList />
+  <TargetedWidget />
 </template>
 
 <script setup>
-import BasicList from './components/BasicList.vue';
+import TargetedWidget from './components/TargetedWidget.vue';
 </script>
