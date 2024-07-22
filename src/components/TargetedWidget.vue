@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-center mx-auto my-10 max-w-2xl p-6 bg-white border border-gray-200 rounded-lg shadow">
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Direct Mail Build and Price Tool</h5>
-    <p class="font-normal text-gray-600">Use the printing calculator below to start your order.</p>
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
+    <p class="font-normal text-gray-600">{{ props.description }}</p>
 
     <form class="w-full mx-auto py-3 mt-5">
       <select v-model="selectedSize" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
@@ -37,7 +37,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});
+
 const products = ref([]);
 const selectedSize = ref('');
 

@@ -6,10 +6,8 @@ customElements.define('vue-widget', class extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: 'open' });
 
     const attributes = {
-      'date': this.getAttribute('date'),
       'title': this.getAttribute('title'),
-      'end': this.getAttribute('end'),
-      'color': this.getAttribute('color')
+      'description': this.getAttribute('description'),
     }
     
     bootstrap(shadowRoot, attributes);
