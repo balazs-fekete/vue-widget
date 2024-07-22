@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex flex-col justify-center mx-auto my-10 max-w-2xl p-6 bg-white border border-gray-200 rounded-lg shadow">
     <!-- Loading overlay -->
-    <div v-if="isLoading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg z-10">
+    <div v-if="isLoading" class="absolute inset-0 bg-white max-w-2xl bg-opacity-75 flex items-center justify-center rounded-lg z-10">
       <div role="status">
         <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin fill-green-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -20,29 +20,23 @@
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
     <form class="w-full mx-auto py-3 mt-5">
-      <select v-model="selectedSize" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+      <select v-model="selectedProduct" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
         <option value="" disabled selected>Select a Size</option>
-        <option v-for="product in products" :key="product.firebase_product_id" :value="product.name">{{ product.name }}</option>
+        <option v-for="product in products" :key="product.firebase_product_id" :value="product">{{ product.name }}</option>
       </select>
     </form>
 
     <form class="w-full mx-auto py-3">
-      <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-        <option selected>Select stock</option>
-        <option value="US">United States</option>
-        <option value="CA">Canada</option>
-        <option value="FR">France</option>
-        <option value="DE">Germany</option>
+      <select v-model="selectedPostageOption" :disabled="!selectedProduct" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+        <option value="" disabled selected>Select Postage</option>
+        <option v-for="postageOption in postageOptions" :key="postageOption.label" :value="postageOption.label">{{ postageOption.label }}</option>
       </select>
     </form>
 
     <form class="w-full mx-auto py-3">
-      <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-        <option selected>Select coating</option>
-        <option value="US">United States</option>
-        <option value="CA">Canada</option>
-        <option value="FR">France</option>
-        <option value="DE">Germany</option>
+      <select v-model="selectedStockOption" :disabled="!selectedPostageOption" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+        <option value="" disabled selected>Select Stock</option>
+        <option v-for="stockOption in stockOptions" :key="stockOption" :value="stockOption">{{ stockOption }}</option>
       </select>
     </form>
 
@@ -53,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted, defineProps, computed } from 'vue';
 
 const props = defineProps({
   title: {
@@ -69,7 +63,13 @@ const props = defineProps({
 const isLoading = ref(false);
 
 const products = ref([]);
-const selectedSize = ref('');
+const selectedProduct = ref('');
+
+const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
+const selectedPostageOption = ref('');
+
+const stockOptions = ['Standard', '80 lb. Text', '100 lb. Gloss Cover', '100 lb. Gloss Text'];
+const selectedStockOption = ref('');
 
 async function fetchProducts() {
   try {
