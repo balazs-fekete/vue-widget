@@ -1,5 +1,4 @@
 <template>
-  <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
   <BasicList />
 </template>
 

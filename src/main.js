@@ -1,7 +1,17 @@
-import { defineCustomElement } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { bootstrap } from './bootstrap.js';
+customElements.define('vue-widget', class extends HTMLElement {
+ 
+  async connectedCallback() {
 
-const VueWidget = defineCustomElement(App)
+    const shadowRoot = this.attachShadow({ mode: 'open' });
 
-customElements.define('vue-widget', VueWidget)
+    const attributes = {
+      'date': this.getAttribute('date'),
+      'title': this.getAttribute('title'),
+      'end': this.getAttribute('end'),
+      'color': this.getAttribute('color')
+    }
+    
+    bootstrap(shadowRoot, attributes);
+  }
+});
