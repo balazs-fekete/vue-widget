@@ -20,7 +20,7 @@
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
     <form class="w-full mx-auto py-3 mt-5">
-      <select v-model="selectedProduct" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+      <select v-model="selectedProduct" @change="emitSelectedProduct" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
         <option value="" disabled selected>Select a Size</option>
         <option v-for="product in products" :key="product.firebase_product_id" :value="product">{{ product.name }}</option>
       </select>
@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps, computed } from 'vue';
+import { ref, onMounted, defineProps, computed, defineEmits } from 'vue';
 
 const props = defineProps({
   title: {
@@ -59,6 +59,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const emit = defineEmits(['product-selected']);
 
 const isLoading = ref(false);
 
@@ -88,6 +90,10 @@ async function fetchProducts() {
   } finally {
     isLoading.value = false;
   }
+}
+
+function emitSelectedProduct() {
+  emit('product-selected', selectedProduct.value);
 }
 
 onMounted(() => {

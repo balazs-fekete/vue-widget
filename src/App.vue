@@ -1,12 +1,13 @@
 <template>
-  <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-  <TargetedWidget :title="props.title" :description="props.description" />
+  <div ref="rootElement">
+    <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
+    <TargetedWidget :title="props.title" :description="props.description" @product-selected="onProductSelected" />
+  </div>
 </template>
 
 <script setup>
 import TargetedWidget from './components/TargetedWidget.vue';
-
-import { defineProps } from 'vue';
+import { defineProps, defineEmits, ref } from 'vue';
 
 // Define props for the component
 const props = defineProps({
@@ -21,4 +22,20 @@ const props = defineProps({
     default: 'Default description.',
   },
 });
+
+const emit = defineEmits(['product-selected']);
+
+const rootElement = ref(null);
+
+function onProductSelected(selectedProduct) {
+  console.log('[vue-widget] Product selected:', selectedProduct);
+
+  // Dispatch a new event from the window
+  const customEvent = new CustomEvent('product-selected', {
+    detail: selectedProduct,
+    bubbles: true,
+    composed: true,
+  });
+  window.dispatchEvent(customEvent);
+}
 </script>
