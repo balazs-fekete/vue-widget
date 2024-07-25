@@ -1,7 +1,7 @@
 <template>
   <div ref="rootElement">
     <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-    <TargetedWidget :title="props.title" :description="props.description" @product-selected="onProductSelected" />
+    <TargetedWidget :title="props.title" :description="props.description" :width="props.width" @product-selected="onProductSelected" />
   </div>
 </template>
 
@@ -20,6 +20,11 @@ const props = defineProps({
     type: String,
     required: false,
     default: 'Default description.',
+  },
+  width: {
+    type: String,
+    required: false,
+    default: 'md',
   },
 });
 

@@ -1,5 +1,5 @@
 <template>
-  <TargetedWidget title="Direct Mail Build and Price Tool" description="Use the printing calculator below to start your order." />
+  <TargetedWidget title="EDDM Price Estimator" description="Use the printing calculator below to start your order." width="lg" />
 </template>
 
 <script setup>
