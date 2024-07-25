@@ -1,6 +1,11 @@
 <template>
   <form class="w-full mx-auto py-3">
-    <select v-model="selectedOption" :disabled="disabled" class="border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-4" @change="emitSelectedOption">
+    <select
+      v-model="selectedOption"
+      :disabled="disabled"
+      class="custom-select appearance-none w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#d3f1cd] focus:border-[#d3f1cd]"
+      @change="emitSelectedOption"
+    >
       <option value="" disabled selected>{{ placeholder }}</option>
       <option v-for="option in options" :key="option" :value="option">
         {{ getOptionLabel(option) }}
@@ -44,3 +49,14 @@ function emitSelectedOption() {
   emit('optionSelected', selectedOption.value);
 }
 </script>
+
+<style scoped>
+.custom-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+</style>

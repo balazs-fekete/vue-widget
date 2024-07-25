@@ -28,13 +28,13 @@
 
     <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
 
-    <DropdownSelect :options="postageOptions" :disabled="!selectedProduct" label="label" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
+    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
+
+    <DropdownSelect :options="postageOptions" :disabled="!selectedQuanity" label="label" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
 
     <DropdownSelect :options="stockOptions" :disabled="!selectedPostageOption" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
 
-    <div class="w-full mx-auto py-3 flex justify-center">
-      <button type="button" class="text-white bg-green-500 hover:bg-green-600 font-medium rounded-full text-sm px-6 py-4 text-center">Start my order</button>
-    </div>
+    <BaseButton />
   </div>
 </template>
 
@@ -42,6 +42,7 @@
 import { ref, onMounted, defineProps, computed, defineEmits } from 'vue';
 
 import DropdownSelect from './ui/DropdownSelect.vue';
+import BaseButton from './ui/BaseButton.vue';
 
 const props = defineProps({
   title: {
@@ -64,6 +65,9 @@ const isLoading = ref(false);
 
 const products = ref([]);
 const selectedProduct = ref('');
+
+const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
+const selectedQuanity = ref(0);
 
 const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
 const selectedPostageOption = ref('');
@@ -93,6 +97,10 @@ async function fetchProducts() {
 function handleProductSelection(value) {
   selectedProduct.value = value;
   emitSelectedProduct(value);
+}
+
+function handleQuantitySelection(value) {
+  selectedQuanity.value = value;
 }
 
 function handlePostageSelection(value) {
