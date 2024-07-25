@@ -16,14 +16,20 @@
 
     <DropdownSelect :options="products" label="name" placeholder="Select product..." :disabled="!selectedQuantity" @optionSelected="handleProductSelection" />
 
-    <DropdownSelect :options="postageOptions" :disabled="!selectedProduct" label="label" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
-
     <DropdownSelect
-      :options="stockOptions"
-      :disabled="!selectedPostageOption || !selectedPostageOption.label"
-      placeholder="Select Stock..."
-      @optionSelected="handleStockSelection"
+      v-if="!isOrderTypeEddm"
+      :options="postageOptions"
+      :disabled="!selectedProduct"
+      label="label"
+      placeholder="Select Postage..."
+      @optionSelected="handlePostageSelection"
     />
+
+    <DropdownSelect :options="stockOptions" :disabled="!selectedProduct" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
+
+    <DropdownSelect :options="coatingOptions" :disabled="!selectedProduct" placeholder="Select Coating..." @optionSelected="handleCoatingSelection" />
+
+    <DropdownSelect :options="turnaroundOptions" :disabled="!selectedProduct" placeholder="Select Turnaround..." @optionSelected="handleTurnaroundSelection" />
 
     <Summary />
 
@@ -79,8 +85,16 @@ const selectedQuantity = ref(0);
 const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
 const selectedPostageOption = computed(() => productStore.selectedPostage);
 
-const stockOptions = ['Standard', '80 lb. Text', '100 lb. Gloss Cover', '100 lb. Gloss Text'];
+const stockOptions = ['Standard - Included', '80 lb. Text - Included', '100 lb. Gloss Cover - Included', '100 lb. Gloss Text - Included'];
 const selectedStockOption = ref('');
+
+const coatingOptions = ['Silk Coating - Included', 'Uncoated - Included', 'AQ - Front Side - Included', 'AQ - Both Sides - Included'];
+const selectedCoatingOption = ref('');
+
+const turnaroundOptions = ['Turnaround 5 days - Included', 'Turnaround 6 days - Included', 'Turnaround 7 days - Included'];
+const selectedTurnaroundOption = ref('');
+
+const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
 
 async function fetchProducts() {
   try {
@@ -116,6 +130,14 @@ function handlePostageSelection(value) {
 
 function handleStockSelection(value) {
   selectedStockOption.value = value;
+}
+
+function handleCoatingSelection(value) {
+  selectedCoatingOption.value = value;
+}
+
+function handleTurnaroundSelection(value) {
+  selectedTurnaroundOption.value = value;
 }
 
 function emitSelectedProduct(value) {

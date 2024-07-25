@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 
 export const useProductStore = defineStore('product', () => {
   //state
-  const products = ref('');
+  const products = ref([]);
   const selectedProduct = ref('');
   const selectedQuantity = ref(0);
 
