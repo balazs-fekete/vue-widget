@@ -12,17 +12,22 @@
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
-    <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
+    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." @optionSelected="handleQuantitySelection" class="mt-5" />
 
-    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
+    <DropdownSelect :options="products" label="name" placeholder="Select product..." :disabled="!selectedQuantity" @optionSelected="handleProductSelection" />
 
-    <DropdownSelect :options="postageOptions" :disabled="!selectedQuanity" label="label" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
+    <DropdownSelect :options="postageOptions" :disabled="!selectedProduct" label="label" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
 
-    <DropdownSelect :options="stockOptions" :disabled="!selectedPostageOption" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
+    <DropdownSelect
+      :options="stockOptions"
+      :disabled="!selectedPostageOption || !selectedPostageOption.label"
+      placeholder="Select Stock..."
+      @optionSelected="handleStockSelection"
+    />
 
     <Summary />
 
-    <BaseButton />
+    <BaseButton :text="props.buttonText" />
   </div>
 </template>
 
@@ -47,6 +52,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  buttonText: {
+    type: String,
+    required: true,
+  },
   width: {
     type: String,
     required: true,
@@ -62,13 +71,13 @@ const emit = defineEmits(['product-selected']);
 const isLoading = ref(false);
 
 const products = computed(() => productStore.products);
-const selectedProduct = ref('');
+const selectedProduct = computed(() => productStore.selectedProduct);
 
 const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
-const selectedQuanity = ref(0);
+const selectedQuantity = ref(0);
 
 const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
-const selectedPostageOption = ref('');
+const selectedPostageOption = computed(() => productStore.selectedPostage);
 
 const stockOptions = ['Standard', '80 lb. Text', '100 lb. Gloss Cover', '100 lb. Gloss Text'];
 const selectedStockOption = ref('');
@@ -79,10 +88,10 @@ async function fetchProducts() {
 
     const payload = {
       orderType: props.orderType,
-      quantity: 1000,
+      quantity: selectedQuantity.value,
     };
 
-    await productStore.getProductList(payload);
+    await productStore.fetchProductList(payload);
   } catch (error) {
     console.log('Error getting products: ', error);
   } finally {
@@ -91,16 +100,18 @@ async function fetchProducts() {
 }
 
 function handleProductSelection(value) {
-  selectedProduct.value = value;
+  productStore.selectedProduct = value;
   emitSelectedProduct(value);
 }
 
 function handleQuantitySelection(value) {
-  selectedQuanity.value = value;
+  selectedQuantity.value = value;
+  productStore.selectedQuantity = value;
+  fetchProducts();
 }
 
 function handlePostageSelection(value) {
-  selectedPostageOption.value = value;
+  productStore.selectedPostage = value;
 }
 
 function handleStockSelection(value) {
@@ -110,8 +121,4 @@ function handleStockSelection(value) {
 function emitSelectedProduct(value) {
   emit('product-selected', value);
 }
-
-onMounted(() => {
-  fetchProducts();
-});
 </script>

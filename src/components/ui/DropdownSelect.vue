@@ -42,7 +42,7 @@ const emit = defineEmits(['optionSelected']);
 const selectedOption = ref('');
 
 function getOptionLabel(option) {
-  return props?.label ? option[props.label] : option;
+  return props?.label ? `${option[props.label]}${option?.value ? ` - $${option.value.toFixed(2)} / piece` : ''}` : option;
 }
 
 function emitSelectedOption() {
