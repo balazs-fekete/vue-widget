@@ -1,12 +1,12 @@
 <template>
   <div ref="rootElement">
     <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-    <TargetedWidget :title="props.title" :description="props.description" :width="props.width" @product-selected="onProductSelected" />
+    <Widget :title="props.title" :description="props.description" :width="props.width" @product-selected="onProductSelected" />
   </div>
 </template>
 
 <script setup>
-import TargetedWidget from './components/TargetedWidget.vue';
+import Widget from './components/Widget.vue';
 import { defineProps, defineEmits, ref } from 'vue';
 
 // Define props for the component
@@ -25,6 +25,13 @@ const props = defineProps({
     type: String,
     required: false,
     default: 'md',
+    validator: (value) => ['md', 'lg', 'xl'].includes(value),
+  },
+  orderType: {
+    type: String,
+    required: false,
+    default: 'targeted',
+    validator: (value) => ['targeted', 'eddm', 'saturation'].includes(value),
   },
 });
 
