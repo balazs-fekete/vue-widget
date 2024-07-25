@@ -1,5 +1,12 @@
 <template>
-  <div class="relative flex flex-col justify-center mx-auto my-10 max-w-2xl p-6 bg-white border border-gray-200 rounded-lg shadow">
+  <div
+    class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow"
+    :class="{
+      'max-w-md': props.width === 'md',
+      'max-w-lg': props.width === 'lg',
+      'max-w-xl': props.width === 'xl',
+    }"
+  >
     <!-- Loading overlay -->
     <div v-if="isLoading" class="absolute inset-0 bg-white max-w-2xl bg-opacity-75 flex items-center justify-center rounded-lg z-10">
       <div role="status">
@@ -19,26 +26,11 @@
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
-    <form class="w-full mx-auto py-3 mt-5">
-      <select v-model="selectedProduct" @change="emitSelectedProduct" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-        <option value="" disabled selected>Select a Size</option>
-        <option v-for="product in products" :key="product.firebase_product_id" :value="product">{{ product.name }}</option>
-      </select>
-    </form>
+    <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
 
-    <form class="w-full mx-auto py-3">
-      <select v-model="selectedPostageOption" :disabled="!selectedProduct" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-        <option value="" disabled selected>Select Postage</option>
-        <option v-for="postageOption in postageOptions" :key="postageOption.label" :value="postageOption.label">{{ postageOption.label }}</option>
-      </select>
-    </form>
+    <DropdownSelect :options="postageOptions" :disabled="!selectedProduct" label="label" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
 
-    <form class="w-full mx-auto py-3">
-      <select v-model="selectedStockOption" :disabled="!selectedPostageOption" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-        <option value="" disabled selected>Select Stock</option>
-        <option v-for="stockOption in stockOptions" :key="stockOption" :value="stockOption">{{ stockOption }}</option>
-      </select>
-    </form>
+    <DropdownSelect :options="stockOptions" :disabled="!selectedPostageOption" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
 
     <div class="w-full mx-auto py-3 flex justify-center">
       <button type="button" class="text-white bg-green-500 hover:bg-green-600 font-medium rounded-full text-sm px-6 py-4 text-center">Start my order</button>
@@ -49,12 +41,18 @@
 <script setup>
 import { ref, onMounted, defineProps, computed, defineEmits } from 'vue';
 
+import DropdownSelect from './ui/DropdownSelect.vue';
+
 const props = defineProps({
   title: {
     type: String,
     required: true,
   },
   description: {
+    type: String,
+    required: true,
+  },
+  width: {
     type: String,
     required: true,
   },
@@ -92,8 +90,21 @@ async function fetchProducts() {
   }
 }
 
-function emitSelectedProduct() {
-  emit('product-selected', selectedProduct.value);
+function handleProductSelection(value) {
+  selectedProduct.value = value;
+  emitSelectedProduct(value);
+}
+
+function handlePostageSelection(value) {
+  selectedPostageOption.value = value;
+}
+
+function handleStockSelection(value) {
+  selectedStockOption.value = value;
+}
+
+function emitSelectedProduct(value) {
+  emit('product-selected', value);
 }
 
 onMounted(() => {
