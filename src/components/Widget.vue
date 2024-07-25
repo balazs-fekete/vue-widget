@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow"
+    class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md"
     :class="{
       'max-w-md': props.width === 'md',
       'max-w-lg': props.width === 'lg',
@@ -29,10 +29,14 @@
 <script setup>
 import { ref, onMounted, defineProps, computed, defineEmits } from 'vue';
 
+import { useProductStore } from '../stores/product-store.js';
+
 import DropdownSelect from './ui/DropdownSelect.vue';
 import BaseButton from './ui/BaseButton.vue';
 import Summary from './ui/Summary.vue';
 import Loader from './ui/Loader.vue';
+
+const productStore = useProductStore();
 
 const props = defineProps({
   title: {
@@ -57,7 +61,7 @@ const emit = defineEmits(['product-selected']);
 
 const isLoading = ref(false);
 
-const products = ref([]);
+const products = computed(() => productStore.products);
 const selectedProduct = ref('');
 
 const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
@@ -71,18 +75,16 @@ const selectedStockOption = ref('');
 
 async function fetchProducts() {
   try {
-    console.log('[vue widget] started WP product request');
-
     isLoading.value = true;
 
-    const response = await fetch('https://devtest.onebrand.net/wp-json/amp/v2/products/?order_type=targeted&qty=1000');
-    const data = await response.json();
+    const payload = {
+      orderType: props.orderType,
+      quantity: 1000,
+    };
 
-    products.value = data.products;
-
-    console.log('[vue widget] product from WP: ', data.products);
+    await productStore.getProductList(payload);
   } catch (error) {
-    console.log('vue widget] Error getting products: ', error);
+    console.log('Error getting products: ', error);
   } finally {
     isLoading.value = false;
   }

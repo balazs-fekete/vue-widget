@@ -1,7 +1,7 @@
 <template>
   <div ref="rootElement">
     <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-    <Widget :title="props.title" :description="props.description" :width="props.width" @product-selected="onProductSelected" />
+    <Widget :title="props.title" :description="props.description" :width="props.width" :orderType="props.orderType" @product-selected="onProductSelected" />
   </div>
 </template>
 

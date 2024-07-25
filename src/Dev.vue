@@ -1,5 +1,5 @@
 <template>
-  <Widget title="EDDM Price Estimator" description="Use the printing calculator below to start your order." width="lg" orderType="targeted" />
+  <Widget title="EDDM Price Estimator" description="Use the printing calculator below to start your order." width="lg" orderType="eddm" />
 </template>
 
 <script setup>
