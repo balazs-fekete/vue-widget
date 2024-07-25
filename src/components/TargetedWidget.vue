@@ -34,6 +34,8 @@
 
     <DropdownSelect :options="stockOptions" :disabled="!selectedPostageOption" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
 
+    <Summary />
+
     <BaseButton />
   </div>
 </template>
@@ -43,6 +45,7 @@ import { ref, onMounted, defineProps, computed, defineEmits } from 'vue';
 
 import DropdownSelect from './ui/DropdownSelect.vue';
 import BaseButton from './ui/BaseButton.vue';
+import Summary from './ui/Summary.vue';
 
 const props = defineProps({
   title: {
