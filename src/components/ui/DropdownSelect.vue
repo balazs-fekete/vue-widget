@@ -3,7 +3,7 @@
     <select
       v-model="selectedOption"
       :disabled="disabled"
-      class="custom-select appearance-none w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#d3f1cd] focus:border-[#d3f1cd]"
+      class="custom-select appearance-none w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primaryFocus focus:border-primaryFocus"
       @change="emitSelectedOption"
     >
       <option value="" disabled selected>{{ placeholder }}</option>
