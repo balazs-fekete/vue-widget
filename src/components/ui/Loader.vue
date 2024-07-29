@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute inset-0 bg-white max-w-2xl bg-opacity-75 flex items-center justify-center rounded-lg z-10">
+  <div class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg z-10">
     <div role="status">
       <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path

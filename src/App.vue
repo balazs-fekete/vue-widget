@@ -1,12 +1,17 @@
 <template>
-  <div ref="rootElement">
-    <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-    <TargetedWidget :title="props.title" :description="props.description" :width="props.width" @product-selected="onProductSelected" />
-  </div>
+  <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
+  <Widget
+    :title="props.title"
+    :description="props.description"
+    :buttonText="props.buttonText"
+    :orderType="props.orderType"
+    @product-selected="onProductSelected"
+    :style="{ width: props.width, height: props.height }"
+  />
 </template>
 
 <script setup>
-import TargetedWidget from './components/TargetedWidget.vue';
+import Widget from './components/Widget.vue';
 import { defineProps, defineEmits, ref } from 'vue';
 
 // Define props for the component
@@ -21,16 +26,30 @@ const props = defineProps({
     required: false,
     default: 'Default description.',
   },
+  buttonText: {
+    type: String,
+    required: false,
+    default: 'Start my order',
+  },
   width: {
     type: String,
     required: false,
-    default: 'md',
+    default: '350px',
+  },
+  height: {
+    type: String,
+    required: false,
+    default: '500px',
+  },
+  orderType: {
+    type: String,
+    required: false,
+    default: 'targeted',
+    validator: (value) => ['targeted', 'eddm', 'saturation'].includes(value),
   },
 });
 
 const emit = defineEmits(['product-selected']);
-
-const rootElement = ref(null);
 
 function onProductSelected(selectedProduct) {
   console.log('[vue-widget] Product selected:', selectedProduct);

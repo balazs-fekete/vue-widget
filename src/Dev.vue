@@ -1,7 +1,13 @@
 <template>
-  <TargetedWidget title="EDDM Price Estimator" description="Use the printing calculator below to start your order." width="lg" />
+  <Widget
+    title="EDDM Price Estimator"
+    description="Use the printing calculator below to start your order."
+    buttonText="Launch Map Tool"
+    orderType="eddm"
+    :style="{ width: '550px', height: '700px' }"
+  />
 </template>
 
 <script setup>
-import TargetedWidget from './components/TargetedWidget.vue';
+import Widget from './components/Widget.vue';
 </script>

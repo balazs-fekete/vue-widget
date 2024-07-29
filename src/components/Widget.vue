@@ -1,0 +1,138 @@
+<template>
+  <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+    <Loader v-if="isLoading" />
+
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
+    <p class="font-normal text-gray-600">{{ props.description }}</p>
+
+    <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
+
+    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
+
+    <DropdownSelect
+      v-if="!isOrderTypeEddm"
+      :options="postageOptions"
+      :disabled="!selectedProduct"
+      label="label"
+      placeholder="Select Postage..."
+      @optionSelected="handlePostageSelection"
+    />
+
+    <DropdownSelect :options="stockOptions" :disabled="!selectedProduct" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
+
+    <DropdownSelect :options="coatingOptions" :disabled="!selectedProduct" placeholder="Select Coating..." @optionSelected="handleCoatingSelection" />
+
+    <DropdownSelect :options="turnaroundOptions" :disabled="!selectedProduct" placeholder="Select Turnaround..." @optionSelected="handleTurnaroundSelection" />
+
+    <Summary />
+
+    <BaseButton :text="props.buttonText" />
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, defineProps, computed, defineEmits } from 'vue';
+
+import { useProductStore } from '../stores/product-store.js';
+
+import DropdownSelect from './ui/DropdownSelect.vue';
+import BaseButton from './ui/BaseButton.vue';
+import Summary from './ui/Summary.vue';
+import Loader from './ui/Loader.vue';
+
+const productStore = useProductStore();
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  buttonText: {
+    type: String,
+    required: true,
+  },
+  orderType: {
+    type: String,
+    required: true,
+  },
+});
+
+const emit = defineEmits(['product-selected']);
+
+const isLoading = ref(false);
+
+const products = computed(() => productStore.products);
+const selectedProduct = computed(() => productStore.selectedProduct);
+
+const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
+const selectedQuantity = ref(0);
+
+const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
+const selectedPostageOption = computed(() => productStore.selectedPostage);
+
+const stockOptions = ['Standard - Included', '80 lb. Text - Included', '100 lb. Gloss Cover - Included', '100 lb. Gloss Text - Included'];
+const selectedStockOption = ref('');
+
+const coatingOptions = ['Silk Coating - Included', 'Uncoated - Included', 'AQ - Front Side - Included', 'AQ - Both Sides - Included'];
+const selectedCoatingOption = ref('');
+
+const turnaroundOptions = ['Turnaround 5 days - Included', 'Turnaround 6 days - Included', 'Turnaround 7 days - Included'];
+const selectedTurnaroundOption = ref('');
+
+const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
+
+async function fetchProducts() {
+  try {
+    isLoading.value = true;
+
+    const payload = {
+      orderType: props.orderType,
+      quantity: selectedQuantity.value,
+    };
+
+    await productStore.fetchProductList(payload);
+  } catch (error) {
+    console.log('Error getting products: ', error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+function handleProductSelection(value) {
+  productStore.selectedProduct = value;
+  emitSelectedProduct(value);
+}
+
+function handleQuantitySelection(value) {
+  selectedQuantity.value = value;
+  productStore.selectedQuantity = value;
+}
+
+function handlePostageSelection(value) {
+  productStore.selectedPostage = value;
+}
+
+function handleStockSelection(value) {
+  selectedStockOption.value = value;
+}
+
+function handleCoatingSelection(value) {
+  selectedCoatingOption.value = value;
+}
+
+function handleTurnaroundSelection(value) {
+  selectedTurnaroundOption.value = value;
+}
+
+function emitSelectedProduct(value) {
+  emit('product-selected', value);
+}
+
+onMounted(() => {
+  fetchProducts();
+});
+</script>
