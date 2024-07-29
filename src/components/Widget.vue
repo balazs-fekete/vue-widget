@@ -12,9 +12,9 @@
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
-    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." @optionSelected="handleQuantitySelection" class="mt-5" />
+    <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
 
-    <DropdownSelect :options="products" label="name" placeholder="Select product..." :disabled="!selectedQuantity" @optionSelected="handleProductSelection" />
+    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
 
     <DropdownSelect
       v-if="!isOrderTypeEddm"
@@ -121,7 +121,6 @@ function handleProductSelection(value) {
 function handleQuantitySelection(value) {
   selectedQuantity.value = value;
   productStore.selectedQuantity = value;
-  fetchProducts();
 }
 
 function handlePostageSelection(value) {
@@ -143,4 +142,8 @@ function handleTurnaroundSelection(value) {
 function emitSelectedProduct(value) {
   emit('product-selected', value);
 }
+
+onMounted(() => {
+  fetchProducts();
+});
 </script>

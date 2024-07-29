@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 
 export const useProductStore = defineStore('product', () => {
   //state
-  const products = ref([]);
+  const products = ref('');
   const selectedProduct = ref('');
   const selectedQuantity = ref(0);
 
@@ -28,11 +28,10 @@ export const useProductStore = defineStore('product', () => {
       const availableOrderTypes = ['targeted', 'eddm', 'saturation'];
 
       if (!availableOrderTypes.includes(payload.orderType)) {
-        console.log('asdasdasd');
         throw new Error('Error getting products: Order type is invaid');
       }
 
-      const response = await fetch(`https://devtest.onebrand.net/wp-json/amp/v2/products/?order_type=${payload.orderType}&qty=${payload.quantity}`);
+      const response = await fetch(`https://devtest.onebrand.net/wp-json/amp/v2/products/?order_type=${payload.orderType}&qty=${payload.quantity || 100}`);
       const data = await response.json();
 
       products.value = data.products;
