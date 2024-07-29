@@ -1,12 +1,5 @@
 <template>
-  <div
-    class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md"
-    :class="{
-      'max-w-md': props.width === 'md',
-      'max-w-lg': props.width === 'lg',
-      'max-w-xl': props.width === 'xl',
-    }"
-  >
+  <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
     <Loader v-if="isLoading" />
 
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
@@ -59,10 +52,6 @@ const props = defineProps({
     required: true,
   },
   buttonText: {
-    type: String,
-    required: true,
-  },
-  width: {
     type: String,
     required: true,
   },

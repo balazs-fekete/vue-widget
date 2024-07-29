@@ -4,9 +4,9 @@
     :title="props.title"
     :description="props.description"
     :buttonText="props.buttonText"
-    :width="props.width"
     :orderType="props.orderType"
     @product-selected="onProductSelected"
+    :style="{ width: props.width, height: props.height }"
   />
 </template>
 
@@ -34,8 +34,12 @@ const props = defineProps({
   width: {
     type: String,
     required: false,
-    default: 'md',
-    validator: (value) => ['md', 'lg', 'xl'].includes(value),
+    default: '350px',
+  },
+  height: {
+    type: String,
+    required: false,
+    default: '500px',
   },
   orderType: {
     type: String,
