@@ -1,15 +1,13 @@
 <template>
-  <div ref="rootElement">
-    <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
-    <Widget
-      :title="props.title"
-      :description="props.description"
-      :buttonText="props.buttonText"
-      :width="props.width"
-      :orderType="props.orderType"
-      @product-selected="onProductSelected"
-    />
-  </div>
+  <link rel="stylesheet" href="https://vue-custom-widget.netlify.app/style.css" />
+  <Widget
+    :title="props.title"
+    :description="props.description"
+    :buttonText="props.buttonText"
+    :width="props.width"
+    :orderType="props.orderType"
+    @product-selected="onProductSelected"
+  />
 </template>
 
 <script setup>
@@ -48,8 +46,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['product-selected']);
-
-const rootElement = ref(null);
 
 function onProductSelected(selectedProduct) {
   console.log('[vue-widget] Product selected:', selectedProduct);
