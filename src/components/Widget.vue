@@ -5,24 +5,45 @@
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
-    <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
+    <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
 
-    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
+    <DropdownSelect :options="quantityOptions" :value="selectedQuantity" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
 
     <DropdownSelect
-      v-if="!isOrderTypeEddm"
+      v-if="isPostageOptionEnabled"
+      :value="selectedPostage"
       :options="postageOptions"
-      :disabled="!selectedProduct"
-      label="label"
+      :disabled="isServiceDropdownDisabled"
       placeholder="Select Postage..."
       @optionSelected="handlePostageSelection"
     />
 
-    <DropdownSelect :options="stockOptions" :disabled="!selectedProduct" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
+    <DropdownSelect
+      :options="stockOptions"
+      :value="selectedStock"
+      :disabled="isServiceDropdownDisabled"
+      label="label"
+      placeholder="Select Stock..."
+      @optionSelected="handleStockSelection"
+    />
 
-    <DropdownSelect :options="coatingOptions" :disabled="!selectedProduct" placeholder="Select Coating..." @optionSelected="handleCoatingSelection" />
+    <DropdownSelect
+      :options="coatingOptions"
+      :value="selectedCoating"
+      :disabled="isServiceDropdownDisabled"
+      label="label"
+      placeholder="Select Coating..."
+      @optionSelected="handleCoatingSelection"
+    />
 
-    <DropdownSelect :options="turnaroundOptions" :disabled="!selectedProduct" placeholder="Select Turnaround..." @optionSelected="handleTurnaroundSelection" />
+    <DropdownSelect
+      :options="turnaroundOptions"
+      :value="selectedTurnaround"
+      :disabled="isServiceDropdownDisabled"
+      label="label"
+      placeholder="Select Turnaround..."
+      @optionSelected="handleTurnaroundSelection"
+    />
 
     <Summary />
 
@@ -72,22 +93,27 @@ const isLoading = ref(false);
 const products = computed(() => productStore.products);
 const selectedProduct = computed(() => productStore.selectedProduct);
 
-const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
-const selectedQuantity = ref(0);
+const quantityOptions = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 3000, 3500, 4000, 4500, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
+const selectedQuantity = computed(() => productStore.selectedQuantity);
 
-const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
-const selectedPostageOption = computed(() => productStore.selectedPostage);
+const postageOptions = computed(() => (selectedProduct.value?.product_addons?.mailing_service ? Object.values(selectedProduct.value.product_addons.mailing_service) : []));
+const selectedPostage = computed(() => productStore.selectedPostage);
 
-const stockOptions = ['Standard - Included', '80 lb. Text - Included', '100 lb. Gloss Cover - Included', '100 lb. Gloss Text - Included'];
-const selectedStockOption = ref('');
+const stockOptions = computed(() => {
+  return selectedProduct.value?.product_addons?.stocks ? Object.values(selectedProduct.value.product_addons.stocks) : [];
+});
+const selectedStock = computed(() => productStore.selectedStock);
 
-const coatingOptions = ['Silk Coating - Included', 'Uncoated - Included', 'AQ - Front Side - Included', 'AQ - Both Sides - Included'];
-const selectedCoatingOption = ref('');
+const coatingOptions = computed(() => (selectedProduct.value?.product_addons?.coating ? Object.values(selectedProduct.value.product_addons.coating) : []));
+const selectedCoating = computed(() => productStore.selectedCoating);
 
-const turnaroundOptions = ['Turnaround 5 days - Included', 'Turnaround 6 days - Included', 'Turnaround 7 days - Included'];
-const selectedTurnaroundOption = ref('');
+const turnaroundOptions = computed(() => (selectedProduct.value?.product_addons?.turnaround ? Object.values(selectedProduct.value.product_addons.turnaround) : []));
+const selectedTurnaround = computed(() => productStore.selectedTurnaround);
 
 const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
+const isServiceDropdownDisabled = computed(() => !selectedProduct.value || !selectedQuantity.value);
+
+const isPostageOptionEnabled = false; //to-do: get the value from a prop
 
 async function fetchProducts() {
   try {
@@ -125,13 +151,17 @@ async function getProductById() {
   }
 }
 
-function handleProductSelection(value) {
+async function handleProductSelection(value) {
   productStore.selectedProduct = value;
+
+  if (selectedQuantity.value) {
+    await getProductById();
+  }
+
   emitSelectedProduct(value);
 }
 
 function handleQuantitySelection(value) {
-  selectedQuantity.value = value;
   productStore.selectedQuantity = value;
 
   getProductById();
@@ -142,15 +172,15 @@ function handlePostageSelection(value) {
 }
 
 function handleStockSelection(value) {
-  selectedStockOption.value = value;
+  productStore.selectedStock = value;
 }
 
 function handleCoatingSelection(value) {
-  selectedCoatingOption.value = value;
+  productStore.selectedCoating = value;
 }
 
 function handleTurnaroundSelection(value) {
-  selectedTurnaroundOption.value = value;
+  productStore.selectedTurnaround = value;
 }
 
 function emitSelectedProduct(value) {
