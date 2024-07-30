@@ -59,6 +59,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  siteId: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits(['product-selected']);
@@ -91,7 +95,7 @@ async function fetchProducts() {
 
     const payload = {
       orderType: props.orderType,
-      siteId: '-LGjZtGpLePH-61Rp662', //get the site id from the props
+      siteId: props.siteId,
     };
 
     await productStore.fetchProductList(payload);
@@ -108,7 +112,7 @@ async function getProductById() {
 
     const payload = {
       orderType: props.orderType,
-      siteId: '-LGjZtGpLePH-61Rp662',
+      siteId: props.siteId,
       qty: selectedQuantity.value,
       productId: selectedProduct.value.firebase_product_id,
     };

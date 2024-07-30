@@ -5,6 +5,7 @@
     :description="props.description"
     :buttonText="props.buttonText"
     :orderType="props.orderType"
+    :siteId="props.siteId"
     @product-selected="onProductSelected"
     :style="{ width: props.width, height: props.height }"
   />
@@ -46,6 +47,10 @@ const props = defineProps({
     required: false,
     default: 'targeted',
     validator: (value) => ['targeted', 'eddm', 'saturation'].includes(value),
+  },
+  siteId: {
+    type: String,
+    required: true,
   },
 });
 
