@@ -93,7 +93,7 @@ const isLoading = ref(false);
 const products = computed(() => productStore.products);
 const selectedProduct = computed(() => productStore.selectedProduct);
 
-const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
+const quantityOptions = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 3000, 3500, 4000, 4500, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
 const selectedQuantity = computed(() => productStore.selectedQuantity);
 
 const postageOptions = computed(() => (selectedProduct.value?.product_addons?.mailing_service ? Object.values(selectedProduct.value.product_addons.mailing_service) : []));
