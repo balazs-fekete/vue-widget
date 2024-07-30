@@ -5,17 +5,45 @@
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
     <p class="font-normal text-gray-600">{{ props.description }}</p>
 
-    <DropdownSelect :options="products" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
+    <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
 
-    <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
+    <DropdownSelect :options="quantityOptions" :value="selectedQuantity" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
 
-    <DropdownSelect v-if="isPostageOptionEnabled" :options="postageOptions" :disabled="!selectedProduct" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
+    <DropdownSelect
+      v-if="isPostageOptionEnabled"
+      :value="selectedPostage"
+      :options="postageOptions"
+      :disabled="!selectedProduct"
+      placeholder="Select Postage..."
+      @optionSelected="handlePostageSelection"
+    />
 
-    <DropdownSelect :options="stockOptions" :disabled="!selectedProduct" label="label" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
+    <DropdownSelect
+      :options="stockOptions"
+      :value="selectedStock"
+      :disabled="!selectedProduct"
+      label="label"
+      placeholder="Select Stock..."
+      @optionSelected="handleStockSelection"
+    />
 
-    <DropdownSelect :options="coatingOptions" :disabled="!selectedProduct" label="label" placeholder="Select Coating..." @optionSelected="handleCoatingSelection" />
+    <DropdownSelect
+      :options="coatingOptions"
+      :value="selectedCoating"
+      :disabled="!selectedProduct"
+      label="label"
+      placeholder="Select Coating..."
+      @optionSelected="handleCoatingSelection"
+    />
 
-    <DropdownSelect :options="turnaroundOptions" :disabled="!selectedProduct" label="label" placeholder="Select Turnaround..." @optionSelected="handleTurnaroundSelection" />
+    <DropdownSelect
+      :options="turnaroundOptions"
+      :value="selectedTurnaround"
+      :disabled="!selectedProduct"
+      label="label"
+      placeholder="Select Turnaround..."
+      @optionSelected="handleTurnaroundSelection"
+    />
 
     <Summary />
 
@@ -69,19 +97,18 @@ const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5
 const selectedQuantity = computed(() => productStore.selectedQuantity);
 
 const postageOptions = computed(() => (selectedProduct.value?.product_addons?.mailing_service ? Object.values(selectedProduct.value.product_addons.mailing_service) : []));
-const selectedPostageOption = computed(() => productStore.selectedPostage);
+const selectedPostage = computed(() => productStore.selectedPostage);
 
 const stockOptions = computed(() => {
-  console.log('selected product: ', selectedProduct.value);
   return selectedProduct.value?.product_addons?.stocks ? Object.values(selectedProduct.value.product_addons.stocks) : [];
 });
-const selectedStockOption = computed(() => productStore.selectedStock);
+const selectedStock = computed(() => productStore.selectedStock);
 
 const coatingOptions = computed(() => (selectedProduct.value?.product_addons?.coating ? Object.values(selectedProduct.value.product_addons.coating) : []));
-const selectedCoatingOption = computed(() => productStore.selectedCoating);
+const selectedCoating = computed(() => productStore.selectedCoating);
 
 const turnaroundOptions = computed(() => (selectedProduct.value?.product_addons?.turnaround ? Object.values(selectedProduct.value.product_addons.turnaround) : []));
-const selectedTurnaroundOption = computed(() => productStore.selectedTurnaround);
+const selectedTurnaround = computed(() => productStore.selectedTurnaround);
 
 const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
 
@@ -123,8 +150,13 @@ async function getProductById() {
   }
 }
 
-function handleProductSelection(value) {
+async function handleProductSelection(value) {
   productStore.selectedProduct = value;
+
+  if (selectedQuantity.value) {
+    await getProductById();
+  }
+
   emitSelectedProduct(value);
 }
 
