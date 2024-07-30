@@ -20,7 +20,7 @@ const props = defineProps({
   title: {
     type: String,
     required: false,
-    default: 'Product Pricing Estimator',
+    default: 'Product Pricing Estimator.',
   },
   description: {
     type: String,
