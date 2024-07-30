@@ -9,20 +9,13 @@
 
     <DropdownSelect :options="quantityOptions" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
 
-    <DropdownSelect
-      v-if="!isOrderTypeEddm"
-      :options="postageOptions"
-      :disabled="!selectedProduct"
-      label="label"
-      placeholder="Select Postage..."
-      @optionSelected="handlePostageSelection"
-    />
+    <DropdownSelect v-if="isPostageOptionEnabled" :options="postageOptions" :disabled="!selectedProduct" placeholder="Select Postage..." @optionSelected="handlePostageSelection" />
 
-    <DropdownSelect :options="stockOptions" :disabled="!selectedProduct" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
+    <DropdownSelect :options="stockOptions" :disabled="!selectedProduct" label="label" placeholder="Select Stock..." @optionSelected="handleStockSelection" />
 
-    <DropdownSelect :options="coatingOptions" :disabled="!selectedProduct" placeholder="Select Coating..." @optionSelected="handleCoatingSelection" />
+    <DropdownSelect :options="coatingOptions" :disabled="!selectedProduct" label="label" placeholder="Select Coating..." @optionSelected="handleCoatingSelection" />
 
-    <DropdownSelect :options="turnaroundOptions" :disabled="!selectedProduct" placeholder="Select Turnaround..." @optionSelected="handleTurnaroundSelection" />
+    <DropdownSelect :options="turnaroundOptions" :disabled="!selectedProduct" label="label" placeholder="Select Turnaround..." @optionSelected="handleTurnaroundSelection" />
 
     <Summary />
 
@@ -73,21 +66,26 @@ const products = computed(() => productStore.products);
 const selectedProduct = computed(() => productStore.selectedProduct);
 
 const quantityOptions = [10, 25, 50, 100, 150, 200, 300, 400, 500, 1000, 2000, 5000];
-const selectedQuantity = ref(0);
+const selectedQuantity = computed(() => productStore.selectedQuantity);
 
-const postageOptions = computed(() => (selectedProduct.value ? Object.values(selectedProduct.value.product_addons.mailing_services) : []));
+const postageOptions = computed(() => (selectedProduct.value?.product_addons?.mailing_service ? Object.values(selectedProduct.value.product_addons.mailing_service) : []));
 const selectedPostageOption = computed(() => productStore.selectedPostage);
 
-const stockOptions = ['Standard - Included', '80 lb. Text - Included', '100 lb. Gloss Cover - Included', '100 lb. Gloss Text - Included'];
-const selectedStockOption = ref('');
+const stockOptions = computed(() => {
+  console.log('selected product: ', selectedProduct.value);
+  return selectedProduct.value?.product_addons?.stocks ? Object.values(selectedProduct.value.product_addons.stocks) : [];
+});
+const selectedStockOption = computed(() => productStore.selectedStock);
 
-const coatingOptions = ['Silk Coating - Included', 'Uncoated - Included', 'AQ - Front Side - Included', 'AQ - Both Sides - Included'];
-const selectedCoatingOption = ref('');
+const coatingOptions = computed(() => (selectedProduct.value?.product_addons?.coating ? Object.values(selectedProduct.value.product_addons.coating) : []));
+const selectedCoatingOption = computed(() => productStore.selectedCoating);
 
-const turnaroundOptions = ['Turnaround 5 days - Included', 'Turnaround 6 days - Included', 'Turnaround 7 days - Included'];
-const selectedTurnaroundOption = ref('');
+const turnaroundOptions = computed(() => (selectedProduct.value?.product_addons?.turnaround ? Object.values(selectedProduct.value.product_addons.turnaround) : []));
+const selectedTurnaroundOption = computed(() => productStore.selectedTurnaround);
 
 const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
+
+const isPostageOptionEnabled = false; //to-do: get the value from a prop
 
 async function fetchProducts() {
   try {
@@ -131,7 +129,6 @@ function handleProductSelection(value) {
 }
 
 function handleQuantitySelection(value) {
-  selectedQuantity.value = value;
   productStore.selectedQuantity = value;
 
   getProductById();
@@ -142,15 +139,15 @@ function handlePostageSelection(value) {
 }
 
 function handleStockSelection(value) {
-  selectedStockOption.value = value;
+  productStore.selectedStock = value;
 }
 
 function handleCoatingSelection(value) {
-  selectedCoatingOption.value = value;
+  productStore.selectedCoating = value;
 }
 
 function handleTurnaroundSelection(value) {
-  selectedTurnaroundOption.value = value;
+  productStore.selectedTurnaround = value;
 }
 
 function emitSelectedProduct(value) {
