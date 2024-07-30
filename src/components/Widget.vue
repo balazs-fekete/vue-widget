@@ -13,7 +13,7 @@
       v-if="isPostageOptionEnabled"
       :value="selectedPostage"
       :options="postageOptions"
-      :disabled="!selectedProduct"
+      :disabled="isServiceDropdownDisabled"
       placeholder="Select Postage..."
       @optionSelected="handlePostageSelection"
     />
@@ -21,7 +21,7 @@
     <DropdownSelect
       :options="stockOptions"
       :value="selectedStock"
-      :disabled="!selectedProduct"
+      :disabled="isServiceDropdownDisabled"
       label="label"
       placeholder="Select Stock..."
       @optionSelected="handleStockSelection"
@@ -30,7 +30,7 @@
     <DropdownSelect
       :options="coatingOptions"
       :value="selectedCoating"
-      :disabled="!selectedProduct"
+      :disabled="isServiceDropdownDisabled"
       label="label"
       placeholder="Select Coating..."
       @optionSelected="handleCoatingSelection"
@@ -39,7 +39,7 @@
     <DropdownSelect
       :options="turnaroundOptions"
       :value="selectedTurnaround"
-      :disabled="!selectedProduct"
+      :disabled="isServiceDropdownDisabled"
       label="label"
       placeholder="Select Turnaround..."
       @optionSelected="handleTurnaroundSelection"
@@ -111,6 +111,7 @@ const turnaroundOptions = computed(() => (selectedProduct.value?.product_addons?
 const selectedTurnaround = computed(() => productStore.selectedTurnaround);
 
 const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
+const isServiceDropdownDisabled = computed(() => !selectedProduct.value || !selectedQuantity.value);
 
 const isPostageOptionEnabled = false; //to-do: get the value from a prop
 

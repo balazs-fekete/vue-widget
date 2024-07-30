@@ -32,7 +32,7 @@ export const useProductStore = defineStore('product', () => {
         throw new Error('Error getting products: Order type is invalid');
       }
 
-      //resetSelectedValues();
+      resetSelectedValues();
 
       const response = await axios.post(`${import.meta.env.VITE_CLOUD_FUNCTION_URL}/productsHandler/getProducts`, {
         site_id: payload.siteId,
@@ -57,7 +57,7 @@ export const useProductStore = defineStore('product', () => {
         throw new Error('Error getting products: Order type is invalid');
       }
 
-      //resetSelectedValues();
+      resetSelectedValues();
 
       const response = await axios.post(`${import.meta.env.VITE_CLOUD_FUNCTION_URL}/productsHandler/getProduct`, {
         site_id: payload.siteId,
