@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import axios from 'axios'; // Import axios
 
 export const useProductStore = defineStore('product', () => {
-  //state
+  // State
   const products = ref('');
   const selectedProduct = ref('');
   const selectedQuantity = ref(0);
@@ -12,34 +13,72 @@ export const useProductStore = defineStore('product', () => {
   const selectedCoating = ref({ label: '', value: 0});
   const selectedTurnaround = ref({ label: '', value: 0});
 
-  //getters
+  // Getters
 
-  //to-do: handle the flat fee services
+  // Handle the flat fee services
   const getPricePerPieceValue = computed(() => {
     return selectedProduct.value?.product_addons?.price_per_piece +
       parseFloat(selectedPostage.value.value + selectedStock.value.value + selectedCoating.value.value + selectedTurnaround.value.value) || 0;
   });
 
-  //actions
+  // Actions
   async function fetchProductList(payload) {
     try {
-      console.log('[vue widget] started WP product request');
+      console.log('[vue widget] fetchProductList payload: ', payload);
 
-      const availableOrderTypes = ['targeted', 'eddm', 'saturation'];
-
-      if (!availableOrderTypes.includes(payload.orderType)) {
-        throw new Error('Error getting products: Order type is invaid');
+      if (!checkOrderType(payload?.orderType)) {
+        throw new Error('Error getting products: Order type is invalid');
       }
 
-      const response = await fetch(`https://devtest.onebrand.net/wp-json/amp/v2/products/?order_type=${payload.orderType}&qty=${payload.quantity || 100}`);
-      const data = await response.json();
+      const response = await axios.post(
+        `${import.meta.env.VITE_CLOUD_FUNCTION_URL}/productsHandler/getProducts`,
+        {
+          site_id: payload.siteId,
+          order_type: payload.orderType
+        }
+      );
+
+      const data = response.data;
 
       products.value = data.products;
 
-      console.log('[vue widget] product from WP: ', data.products);
+      console.log('[vue widget] fetchProductList result: ', data.products);
     } catch (error) {
-      console.log('vue widget] Error getting products: ', error);
+      console.log('[vue widget] Error getting products: ', error);
     }
+  }
+
+  async function getProductById(payload) {
+    try {
+      console.log('[vue widget] getProductById payload: ', payload);
+
+      if (!checkOrderType(payload?.orderType)) {
+        throw new Error('Error getting products: Order type is invalid');
+      }
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_CLOUD_FUNCTION_URL}/productsHandler/getProduct`,
+        {
+          site_id: payload.siteId,
+          order_type: payload.orderType,
+          product_id: payload.productId,
+          qty: payload.qty,
+        }
+      );
+
+      const data = response.data;
+
+      console.log('[vue widget] getProductById result: ', data);
+
+    } catch (error) {
+      console.log('[vue widget] Error getting product by id: ', error);
+    }
+  }
+
+  function checkOrderType(orderType) {
+    const availableOrderTypes = ['targeted', 'eddm', 'saturation'];
+
+    return availableOrderTypes.includes(orderType);
   }
 
   return {
@@ -52,5 +91,6 @@ export const useProductStore = defineStore('product', () => {
     selectedTurnaround,
     getPricePerPieceValue,
     fetchProductList,
+    getProductById,
   };
 });

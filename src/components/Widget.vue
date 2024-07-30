@@ -59,6 +59,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  siteId: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits(['product-selected']);
@@ -91,12 +95,31 @@ async function fetchProducts() {
 
     const payload = {
       orderType: props.orderType,
-      quantity: selectedQuantity.value,
+      siteId: props.siteId,
     };
 
     await productStore.fetchProductList(payload);
   } catch (error) {
     console.log('Error getting products: ', error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function getProductById() {
+  try {
+    isLoading.value = true;
+
+    const payload = {
+      orderType: props.orderType,
+      siteId: props.siteId,
+      qty: selectedQuantity.value,
+      productId: selectedProduct.value.firebase_product_id,
+    };
+
+    await productStore.getProductById(payload);
+  } catch (error) {
+    console.log('Error getting product by id: ', error);
   } finally {
     isLoading.value = false;
   }
@@ -110,6 +133,8 @@ function handleProductSelection(value) {
 function handleQuantitySelection(value) {
   selectedQuantity.value = value;
   productStore.selectedQuantity = value;
+
+  getProductById();
 }
 
 function handlePostageSelection(value) {
