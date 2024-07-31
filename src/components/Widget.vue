@@ -110,7 +110,6 @@ const selectedCoating = computed(() => productStore.selectedCoating);
 const turnaroundOptions = computed(() => (selectedProduct.value?.product_addons?.turnaround ? Object.values(selectedProduct.value.product_addons.turnaround) : []));
 const selectedTurnaround = computed(() => productStore.selectedTurnaround);
 
-const isOrderTypeEddm = computed(() => props.orderType === 'eddm');
 const isServiceDropdownDisabled = computed(() => !selectedProduct.value || !selectedQuantity.value);
 
 const isPostageOptionEnabled = false; //to-do: get the value from a prop

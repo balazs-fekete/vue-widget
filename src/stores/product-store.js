@@ -17,10 +17,17 @@ export const useProductStore = defineStore('product', () => {
 
   // Handle the flat fee services
   const getPricePerPieceValue = computed(() => {
-    return (
-      selectedProduct.value?.product_addons?.price_per_piece +
-        parseFloat(selectedPostage.value.value + selectedStock.value.value + selectedCoating.value.value + selectedTurnaround.value.value) || 0
-    );
+    if (!selectedProduct.value?.product_addons) return 0;
+
+    const basePricePerPiece = parseFloat(selectedProduct.value?.product_addons?.price_per_piece) || 1;
+    const postagePrice = parseFloat(selectedPostage.value.value) || 0;
+    const stockPrice = parseFloat(selectedStock.value.value) || 0;
+    const coatingPrice = parseFloat(selectedCoating.value.value) || 0;
+    const turnaroundPrice = parseFloat(selectedTurnaround.value.value) || 0;
+
+    const calculatedPricePerPiece = basePricePerPiece + postagePrice + stockPrice + coatingPrice + turnaroundPrice || 0;
+
+    return calculatedPricePerPiece;
   });
 
   // Actions
