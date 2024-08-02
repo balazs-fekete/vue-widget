@@ -20,7 +20,7 @@ const props = defineProps({
 const emit = defineEmits(["onButtonClick"]);
 
 function onButtonClick() {
-  emit("onButtonClick", props.step.step_id);
+  emit('on-button-click');
 }
 
 </script>
