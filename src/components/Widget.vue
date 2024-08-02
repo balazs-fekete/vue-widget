@@ -1,13 +1,13 @@
 <template>
-  <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+  <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white" :class="[borderOptions, marginY]">
     <Loader v-if="isLoading" />
 
-    <template v-if="isHeaderNeeded">
+    <template v-if="props.isHeaderNeeded">
       <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
       <p class="font-normal text-gray-600">{{ props.description }}</p>
     </template>
 
-    <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
+    <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" :class="marginTop" />
 
     <DropdownSelect :options="quantityOptions" :value="selectedQuantity" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
 
@@ -100,6 +100,12 @@ const emit = defineEmits(['product-selected']);
 
 const isLoading = ref(false);
 
+const borderOptions = computed(() => props.isBorderNeeded ? 'border border-gray-200 rounded-lg shadow-md' : '');
+const marginY = computed(() => props.isHeaderNeeded ? 'my-10' : 'my-2');
+const marginTop = computed(() => props.isHeaderNeeded ? 'mt-4' : '');
+console.log('borderOptions: ', borderOptions);
+console.log('props.isBorderNeeded: ', props.isBorderNeeded);
+console.log('isHeaderNeeded: ', props.isHeaderNeeded);
 const products = computed(() => productStore.products);
 const selectedProduct = computed(() => productStore.selectedProduct);
 
