@@ -10,8 +10,10 @@ customElements.define('vue-widget', class extends HTMLElement {
       'height': this.getAttribute('height'),
       'orderType': this.getAttribute('orderType'),
       'siteId': this.getAttribute('siteId'),
+      'isBorderNeeded': this.getAttribute('isBorderNeeded'),
+      'isHeaderNeeded': this.getAttribute('isHeaderNeeded'),
     }
-    
+
     bootstrap(this, attributes);
   }
 });

@@ -2,8 +2,10 @@
   <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
     <Loader v-if="isLoading" />
 
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
-    <p class="font-normal text-gray-600">{{ props.description }}</p>
+    <template v-if="isHeaderNeeded">
+      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
+      <p class="font-normal text-gray-600">{{ props.description }}</p>
+    </template>
 
     <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
 
@@ -83,6 +85,14 @@ const props = defineProps({
   siteId: {
     type: String,
     required: true,
+  },
+  isBorderNeeded: {
+    type: Boolean,
+    required: false,
+  },
+  isHeaderNeeded: {
+    type: Boolean,
+    required: false,
   },
 });
 
