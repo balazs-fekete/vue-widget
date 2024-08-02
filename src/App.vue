@@ -6,6 +6,8 @@
     :buttonText="props.buttonText"
     :orderType="props.orderType"
     :siteId="props.siteId"
+    :isBorderNeeded="props.isBorderNeeded"
+    :isHeaderNeeded="props.isHeaderNeeded"
     @product-selected="onProductSelected"
     :style="{ width: props.width, height: props.height }"
   />
@@ -51,6 +53,16 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isBorderNeeded: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  isHeaderNeeded: {
+    type: Boolean,
+    required: false,
+    default: false,
+  }
 });
 
 const emit = defineEmits(['product-selected']);
