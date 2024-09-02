@@ -1,11 +1,13 @@
 <template>
-  <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+  <div class="relative flex flex-col justify-center mx-auto my-10 p-6 bg-white" :class="[borderOptions, marginY]">
     <Loader v-if="isLoading" />
 
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
-    <p class="font-normal text-gray-600">{{ props.description }}</p>
+    <template v-if="props.isHeaderNeeded">
+      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ props.title }}</h5>
+      <p class="font-normal text-gray-600">{{ props.description }}</p>
+    </template>
 
-    <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" class="mt-5" />
+    <DropdownSelect :options="products" :value="selectedProduct" label="name" placeholder="Select product..." @optionSelected="handleProductSelection" :class="marginTop" />
 
     <DropdownSelect :options="quantityOptions" :value="selectedQuantity" placeholder="Select quantity..." :disabled="!selectedProduct" @optionSelected="handleQuantitySelection" />
 
@@ -47,7 +49,7 @@
 
     <Summary />
 
-    <BaseButton :text="props.buttonText" />
+    <BaseButton :text="props.buttonText" @on-button-click="onButtonClick"/>
   </div>
 </template>
 
@@ -84,11 +86,23 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isBorderNeeded: {
+    type: Boolean,
+    required: false,
+  },
+  isHeaderNeeded: {
+    type: Boolean,
+    required: false,
+  },
 });
 
-const emit = defineEmits(['product-selected']);
+const emit = defineEmits(['product-selected', 'on-button-click']);
 
 const isLoading = ref(false);
+
+const borderOptions = computed(() => props.isBorderNeeded ? 'border border-gray-200 rounded-lg shadow-md' : '');
+const marginY = computed(() => props.isHeaderNeeded ? 'my-10' : 'my-2');
+const marginTop = computed(() => props.isHeaderNeeded ? 'mt-4' : '');
 
 const products = computed(() => productStore.products);
 const selectedProduct = computed(() => productStore.selectedProduct);
@@ -184,6 +198,29 @@ function handleTurnaroundSelection(value) {
 
 function emitSelectedProduct(value) {
   emit('product-selected', value);
+}
+
+async function onButtonClick() {
+  console.log('Button is clicked');
+  const response = {
+    order_type: props.orderType,
+    list_purchase: 'false',
+    category_slug: props.orderType,
+    product_id: selectedProduct.value.firebase_product_id,
+    stock: productStore.selectedStock.label,
+    coating: productStore.selectedCoating.label,
+    turnaround: productStore.selectedTurnaround.label,
+    mailing_list: 'later',
+    print_prep_ship: 'false',
+    qty: selectedQuantity.value,
+    purchased_qty: 'false',
+    per_piece_list_price: '0',
+    total_mailing_price: '',
+    mailing_list_order_object: ''
+  };
+
+  console.log('Response:', response);
+  emit('on-button-click', response);
 }
 
 onMounted(() => {

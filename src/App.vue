@@ -6,7 +6,10 @@
     :buttonText="props.buttonText"
     :orderType="props.orderType"
     :siteId="props.siteId"
+    :isBorderNeeded="props.isBorderNeeded"
+    :isHeaderNeeded="props.isHeaderNeeded"
     @product-selected="onProductSelected"
+    @on-button-click="onButtonClick"
     :style="{ width: props.width, height: props.height }"
   />
 </template>
@@ -51,9 +54,19 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isBorderNeeded: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  isHeaderNeeded: {
+    type: Boolean,
+    required: false,
+    default: false,
+  }
 });
 
-const emit = defineEmits(['product-selected']);
+const emit = defineEmits(['product-selected', 'vue-pricing-widget']);
 
 function onProductSelected(selectedProduct) {
   console.log('[vue-widget] Product selected:', selectedProduct);
@@ -66,4 +79,18 @@ function onProductSelected(selectedProduct) {
   });
   window.dispatchEvent(customEvent);
 }
+
+function onButtonClick(selectedOptions) {
+  console.log('[vue-widget] Selected options:', selectedOptions);
+
+  // Dispatch a new event from the window
+  const customEvent = new CustomEvent('vue-pricing-widget', {
+    detail: selectedOptions,
+    bubbles: true,
+    composed: true,
+  });
+  window.dispatchEvent(customEvent);
+}
+
+onButtonClick
 </script>
